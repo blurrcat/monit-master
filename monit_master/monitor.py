@@ -17,8 +17,7 @@ class Beat(object):
         self.updated = None
         self.prefix = app.config.get('BEAT_PREFIX', self.DEFAULT_PREFIX)
         self.t = app.config.get('BEAT_TIMEOUT', self.DEFAULT_TIMEOUT)
-        self.blueprint.add_url_rule(
-            '/ping', 'ping', self.ping, methods=['GET', 'POST'])
+        self.blueprint.add_url_rule('/ping', 'ping', self.ping)
         self.blueprint.add_url_rule(
             '/inventory', 'inventory', self.inventory,
             methods=['GET', 'POST'])
@@ -49,15 +48,8 @@ class Beat(object):
         POST: update the heartbeat of the client
         GET: get the ttl of the client
         """
-        key = self._key(request.remote_addr)
-        if request.method == 'POST':
-            self._redis.set(key, '', ex=self.t)
-            return jsonify({'beat': request.remote_addr})
-        else:
-            return jsonify({
-                'beat': request.remote_addr,
-                'ttl': self._redis.ttl(key),
-            })
+        self._redis.set(self._key(request.remote_addr), '', ex=self.t)
+        return jsonify({'beat': request.remote_addr})
 
     def inventory(self):
         """
