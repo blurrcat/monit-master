@@ -88,13 +88,14 @@ class Beat(object):
             'down': [],
         }
         pipe = self._redis.pipeline(transaction=False)
-        for host in self.hosts:
+        hosts = self.hosts.keys()
+        for host in hosts:
             pipe.get(self._key(host))
-        for r in pipe.execute():
+        for i, r in enumerate(pipe.execute()):
             if r is None:
-                instances['down'].append(host)
+                instances['down'].append(hosts[i])
             else:
-                instances['up'].append(host)
+                instances['up'].append(hosts[i])
         if state:
             return jsonify({
                 'instances': {state: instances[state]}

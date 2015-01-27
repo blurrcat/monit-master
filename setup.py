@@ -33,7 +33,7 @@ setup(
     install_requires=install_requires,
     tests_require=tests_require,
     extras_require={
-        'develop': develop_require
+        'develop': develop_require,
     },
     scripts={
         'scripts/monitor_instances.py',
