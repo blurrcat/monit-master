@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 AWS_REGION = 'ap-southeast-1'
-BEAT_PREFIX = 'beat'
-BEAT_TIMEOUT = 300  # clients must at least send a ping every 5 min
 DEBUG = False
 SECRET = '8QTLxlk^fWFCzMzE$tpg'
 MONIT_HTTPD_USER = 'admin'

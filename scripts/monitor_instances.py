@@ -12,7 +12,6 @@ parser.add_argument('-p', '--port', default=8080, type=int)
 parser.add_argument('-s', '--scheme', default='http')
 args = parser.parse_args()
 url = '%s://%s:%d/' % (args.scheme, args.host, args.port)
-requests.post(urljoin(url, 'inventory'))
 r = requests.get(urljoin(url, 'beat/instances/down'))
 data = r.json()['instances']['down']
 if data:
