@@ -10,6 +10,8 @@ history = open('HISTORY.rst').read().replace('.. :changelog:', '')
 install_requires = [
     'Flask==0.10.1',
     'requests==2.5.0',
+    'boto==2.34.0',
+    'redis==2.10.3',
 ]
 tests_require = ['pytest==2.5.1', 'pytest-cov==1.6']
 develop_require = tests_require + [
@@ -31,7 +33,10 @@ setup(
     install_requires=install_requires,
     tests_require=tests_require,
     extras_require={
-        'develop': develop_require
+        'develop': develop_require,
+    },
+    scripts={
+        'scripts/monitor_instances.py',
     },
     zip_safe=False,
     keywords='monit-master',

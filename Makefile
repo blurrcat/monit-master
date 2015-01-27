@@ -3,7 +3,8 @@
 help:
 	@echo "clean-build - remove build artifacts"
 	@echo "clean-pyc - remove Python file artifacts"
-	@echo "config - install config and scripts in virtualenv"
+	@echo "config-develop - install config and scripts in virtualenv"
+	@echo "config - install production dependencies only"
 	@echo "coverage - run coverage test"
 	@echo "lint - check style with pylint"
 	@echo "test - run tests"
@@ -22,8 +23,11 @@ clean-pyc:
 	find . -name '*.pyo' -exec rm -f {} +
 	find . -name '*~' -exec rm -f {} +
 
-config:
+config-develop:
 	pip install -e .[develop]
+
+config:
+	pip install -e .
 
 lint:
 	pylint --rcfile=.pylint.rc monit-master tests ftests
