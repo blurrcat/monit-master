@@ -13,7 +13,7 @@ from monit_master.monitor import Beat
 def create_app():
     app = Flask('monit_master')
     app.config.from_object(config)
-	app.wsgi_app = ProxyFix(app.wsgi_app)
+    app.wsgi_app = ProxyFix(app.wsgi_app)
     # production config set via environment variables prefixed by "MM_"
     for k, v in os.environ.iteritems():
         if k.startswith('MM_'):
