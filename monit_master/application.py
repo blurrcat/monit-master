@@ -4,6 +4,7 @@ import os
 from flask import Flask
 from redis import StrictRedis
 from boto.ec2 import connect_to_region
+from werkzeug.contrib.fixers import ProxyFix
 from monit_master import config
 from monit_master.monit_proxy import MonitProxy
 from monit_master.monitor import Beat
@@ -12,6 +13,7 @@ from monit_master.monitor import Beat
 def create_app():
     app = Flask('monit_master')
     app.config.from_object(config)
+	app.wsgi_app = ProxyFix(app.wsgi_app)
     # production config set via environment variables prefixed by "MM_"
     for k, v in os.environ.iteritems():
         if k.startswith('MM_'):
