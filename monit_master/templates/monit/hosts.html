@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Inventory</h2>
+<ul>
+{% for host, tags in hosts.iteritems() %}
+    <li>
+        <h3><a href="/monit/{{ host }}/">{{ host }}</a></h3>
+        {% for tag in tags  %}
+            <span class="ec2_tag">{{ tag }}</span>
+        {% endfor %}
+    </li>
+{% endfor %}
+</ul>
+{% endblock %}

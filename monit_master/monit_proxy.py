@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from flask import abort, Blueprint, request, make_response
+from flask import abort, Blueprint, request, make_response, current_app, \
+    render_template
 import requests
 from requests.exceptions import HTTPError, Timeout, ConnectionError
 
@@ -36,6 +37,9 @@ class MonitProxy(object):
         self.blueprint = Blueprint(
             'monit_proxy', 'monit_proxy', url_prefix='/monit')
         self.blueprint.add_url_rule(
+            '/', 'hosts', self.hosts
+        )
+        self.blueprint.add_url_rule(
             '/<string:host>/', 'monit_index', self.monit_index)
         self.blueprint.add_url_rule(
             '/<string:host>/<string:service>', 'monit_service',
@@ -64,6 +68,8 @@ class MonitProxy(object):
             return resp.content
 
     def monit_index(self, host):
+        if host == '*':
+            abort(404)
         return self._request('get', self.build_url(host))
 
     def monit_service(self, host, service):
@@ -72,3 +78,12 @@ class MonitProxy(object):
             return self._request('get', url)
         else:
             return self._request('post', url, data=request.form)
+
+    def hosts(self):
+        try:
+            beat = current_app.extensions['beat']
+        except KeyError:
+            abort(404)
+        else:
+            return render_template(
+                'monit/hosts.html', hosts=beat.get_inventory())

@@ -15,7 +15,8 @@ url = '%s://%s:%d/' % (args.scheme, args.host, args.port)
 r = requests.get(urljoin(url, 'beat/instances/down'))
 data = r.json()['instances']['down']
 if data:
-    print '%d hosts are not making heartbeats' % len(data)
+    sys.stderr.write('%d hosts are not making heartbeats\n' % len(data))
     for i in data:
-        print '    %s' % i
+        sys.stderr.write('%s\n' % i)
+    sys.stderr.flush()
     sys.exit(-1)

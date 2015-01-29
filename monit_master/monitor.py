@@ -23,6 +23,7 @@ class Beat(object):
         self.blueprint.add_url_rule(
             '/instances/', 'instances', self.instances)
         app.register_blueprint(self.blueprint)
+        app.extensions['beat'] = self
 
     @staticmethod
     def _key(key):
@@ -37,15 +38,17 @@ class Beat(object):
             ex=current_app.config['BEAT_PING_TIMEOUT'])
         return jsonify({'pong': request.remote_addr})
 
-    def _get_inventory(self):
+    def get_inventory(self):
         key = self._key('inventory')
         data = self._redis.get(key)
         if not data:
-            hosts = []
+            hosts = {}
             for r in self._boto.get_all_reservations():
                 for i in r.instances:
                     if i.state == 'running':
-                        hosts.append(i.private_ip_address)
+                        hosts[i.private_ip_address] = [
+                            ('%s_%s' % (k, v)).strip('_')
+                            for k, v in i.tags.items()]
                 self._redis.set(
                     key, json.dumps(hosts),
                     ex=current_app.config['BEAT_INVENTORY_TIMEOUT'])
@@ -68,7 +71,7 @@ class Beat(object):
             'down': [],
         }
         pipe = self._redis.pipeline(transaction=False)
-        hosts = self._get_inventory()
+        hosts = self.get_inventory().keys()
         for host in hosts:
             pipe.get(self._key(host))
         for i, r in enumerate(pipe.execute()):
